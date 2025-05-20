@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/navbar";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 export default function DefaultLayout({
   children,
@@ -11,6 +12,9 @@ export default function DefaultLayout({
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
         {children}
       </main>
+      <div className="absolute bottom-3 right-4">
+        <ThemeSwitch />
+      </div>
     </div>
   );
 }

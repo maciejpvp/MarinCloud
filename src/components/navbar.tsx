@@ -4,8 +4,6 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 
-import { ThemeSwitch } from "@/components/theme-switch";
-
 export const Navbar = () => {
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
@@ -14,7 +12,8 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <ThemeSwitch />
+          <p>Navbar</p>
+          {/* <ThemeSwitch /> */}
         </NavbarItem>
       </NavbarContent>
     </HeroUINavbar>
