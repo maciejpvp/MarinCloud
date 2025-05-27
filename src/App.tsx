@@ -5,9 +5,15 @@ import { LoginPage } from "@/pages/login";
 import { CallbackPage } from "@/pages/callback";
 
 function App() {
+  const idToken = localStorage.getItem("idToken");
+  const hasToken = !!idToken;
+
   return (
     <Routes>
-      <Route element={<IndexPage />} path="/drive" />
+      <Route
+        element={hasToken ? <IndexPage /> : <Navigate to="/login" />}
+        path="/drive"
+      />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<CallbackPage />} path="/callback" />
       <Route element={<Navigate to="/drive" />} path="*" />
