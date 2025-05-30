@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import AuthLayout from "@/layouts/auth";
 
 export const CallbackPage = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
 
@@ -36,7 +35,7 @@ export const CallbackPage = () => {
 
       if (data.id_token) {
         localStorage.setItem("idToken", data.id_token);
-        navigate("/drive");
+        window.location.href = "/drive";
       }
     } catch {
       setError(true);
@@ -49,7 +48,7 @@ export const CallbackPage = () => {
     const hasIdToken = !!idToken;
 
     if (hasIdToken) {
-      navigate("/drive");
+      window.location.href = "/drive";
 
       return;
     }

@@ -2,15 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 
 import axiosInstance from "@/lib/axios";
 
-const fetchData = async () => {
-  const response = await axiosInstance.post("/get-files");
+const fetchData = async (path: string) => {
+  const response = await axiosInstance.post("/get-files", {
+    path: `${path ? path : ""}`,
+  });
 
   return response.data;
 };
 
-export const useGetFiles = () => {
+export const useGetFiles = (path: string) => {
   return useQuery({
-    queryKey: ["files"],
-    queryFn: fetchData,
+    queryKey: [`files/${path}`],
+    queryFn: () => fetchData(path),
+    staleTime: 10 * 60 * 1000, //10 min
   });
 };

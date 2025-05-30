@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@heroui/button": "2.2.19",
     "@heroui/code": "2.2.14",
+    "@heroui/divider": "^2.2.13",
     "@heroui/dropdown": "2.3.19",
     "@heroui/input": "2.4.19",
     "@heroui/kbd": "2.2.15",
@@ -19,6 +21,7 @@
     "@heroui/navbar": "2.2.17",
     "@heroui/popover": "^2.3.19",
     "@heroui/snippet": "2.2.20",
+    "@heroui/spinner": "^2.2.16",
     "@heroui/switch": "2.2.17",
     "@heroui/system": "2.4.15",
     "@heroui/theme": "2.4.15",
@@ -36,7 +39,8 @@
     "react-file-icon": "^1.6.0",
     "react-router-dom": "6.23.0",
     "tailwind-variants": "0.3.0",
-    "tailwindcss": "3.4.16"
+    "tailwindcss": "3.4.16",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/compat": "1.2.8",

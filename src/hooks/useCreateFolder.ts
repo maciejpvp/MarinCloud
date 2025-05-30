@@ -10,18 +10,15 @@ const uploadFile = async (file: File) => {
   const pathAfterDrive =
     location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
 
-  formData.append("path", `${pathAfterDrive}`);
-
-  const response = await axiosInstance.post("/upload-file", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+  const response = await axiosInstance.post("/create-folder", {
+    path: `${pathAfterDrive}`,
+    name: "testFolder",
   });
 
   return response.data;
 };
 
-export const useUploadFile = () => {
+export const useCreateFolder = () => {
   return useMutation({
     mutationFn: uploadFile,
   });

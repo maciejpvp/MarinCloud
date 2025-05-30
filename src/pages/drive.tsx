@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { FilesList } from "@/components/drive/explorer/FilesList";
 import { LeftPanel } from "@/components/drive/explorer/LeftPanel";
@@ -7,7 +8,11 @@ import { useGetFiles } from "@/hooks/useGetFiles";
 import DefaultLayout from "@/layouts/default";
 
 export function IndexPage() {
-  const { data: files, isLoading } = useGetFiles();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const pathAfterDrive =
+    location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
+  const { data: files, isLoading } = useGetFiles(pathAfterDrive);
 
   const [leftWidth, setLeftWidth] = useState(20);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,6 +68,7 @@ export function IndexPage() {
 
         <div className="flex-1  h-full">
           <FilesList files={files ? files.files : []} />
+          <button onClick={() => navigate("testFolder")}>test</button>
         </div>
       </div>
 

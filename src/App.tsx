@@ -12,7 +12,7 @@ function App() {
     <Routes>
       <Route
         element={hasToken ? <IndexPage /> : <Navigate to="/login" />}
-        path="/drive"
+        path="/drive/*"
       />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<CallbackPage />} path="/callback" />

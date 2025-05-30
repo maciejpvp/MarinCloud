@@ -35,6 +35,7 @@ export const UploadForm = () => {
 
     if (files && files.length > 0) {
       console.log("Selected files:", files);
+      uploadFile(files[0]);
       // Handle your file upload here
     }
   };
@@ -43,7 +44,7 @@ export const UploadForm = () => {
     <div className="relative w-full h-screen" onDragEnter={handleDrag}>
       {/* Upload Button */}
       <button
-        className="fixed bottom-4 right-4 z-50 bg-blue-500 hover:bg-blue-600 text-white text-3xl rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+        className="fixed bottom-4 right-10 z-50 bg-blue-500 hover:bg-blue-600 text-white text-3xl rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
         onClick={() => inputRef.current?.click()}
       >
         +
