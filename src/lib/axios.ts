@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { useAuthStore } from "@/store/authStore";
+
 const axiosInstance = axios.create({
   baseURL: "https://3ro86jk312.execute-api.eu-central-1.amazonaws.com/prod",
   timeout: 10000,
@@ -9,10 +11,10 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("idToken");
+  const idToken = useAuthStore.getState().idToken;
 
-  if (token) {
-    config.headers.Authorization = `${token}`;
+  if (idToken) {
+    config.headers.Authorization = `${idToken}`;
   }
 
   return config;
@@ -22,8 +24,10 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("idToken");
-      window.location.href = "/login"; // Redirect to login page
+      // window.location.href = "/login"; // Redirect to login page
+      const login = useAuthStore.getState().login;
+
+      login();
     }
 
     return Promise.reject(error);

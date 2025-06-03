@@ -24,5 +24,8 @@ const uploadFile = async (file: File) => {
 export const useUploadFile = () => {
   return useMutation({
     mutationFn: uploadFile,
+    onSuccess: () => {
+      console.log("UPLOADED SUCCESSFULLY");
+    },
   });
 };

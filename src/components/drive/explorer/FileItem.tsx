@@ -1,10 +1,10 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { FileIcon, defaultStyles } from "react-file-icon";
 
 import { FileItemPopOver } from "./FileItemPopOver";
 
 import { FileType } from "@/types";
 import { getExtension } from "@/utils/utils";
-import { useLocation, useNavigate } from "react-router-dom";
 
 type FileItemProps = {
   file: FileType;
@@ -33,7 +33,7 @@ export const FileItem = ({ file }: FileItemProps) => {
     <>
       {isFolder ? (
         <button
-          className="flex flex-row h-10 gap-2  items-center"
+          className="flex flex-row h-10 gap-2 items-center transition-transform duration-200 hover:translate-x-2"
           onClick={handleFolder}
         >
           <div className="size-8">
@@ -45,7 +45,7 @@ export const FileItem = ({ file }: FileItemProps) => {
           <p className="text-lg font-semibold">{file.fileName}</p>
         </button>
       ) : (
-        <div className="flex flex-row h-10 gap-2  items-center">
+        <div className="flex flex-row h-10 gap-2  items-center transition-transform duration-200 hover:translate-x-2">
           <div className="size-8">
             <FileIcon
               extension={extension}

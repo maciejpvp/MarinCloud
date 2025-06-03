@@ -10,17 +10,17 @@ import "@/styles/globals.css";
 
 const queryClient = new QueryClient();
 
-const debug = true;
+const debug = false;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  <div>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Provider>
           <App />
+          {debug && <ReactQueryDevtools />}
         </Provider>
-        {debug && <ReactQueryDevtools />}
       </QueryClientProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+  </div>,
 );

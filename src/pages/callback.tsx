@@ -33,21 +33,25 @@ export const CallbackPage = () => {
 
       const data = await response.json();
 
-      if (data.id_token) {
-        localStorage.setItem("idToken", data.id_token);
-        window.location.href = "/drive";
+      if (data.refresh_token) {
+        localStorage.setItem("refreshToken", data.refresh_token);
       }
+      window.location.href = "/drive";
+
+      // if (data.id_token) {
+      //   localStorage.setItem("idToken", data.id_token);
+      // }
     } catch {
-      setError(true);
+      setError(false);
     }
   };
 
   useEffect(() => {
-    const idToken = localStorage.getItem("idToken");
+    const refreshToken = localStorage.getItem("refreshToken");
 
-    const hasIdToken = !!idToken;
+    const hasRefreshToken = Boolean(refreshToken);
 
-    if (hasIdToken) {
+    if (hasRefreshToken) {
       window.location.href = "/drive";
 
       return;

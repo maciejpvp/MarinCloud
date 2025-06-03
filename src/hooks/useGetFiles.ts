@@ -7,7 +7,7 @@ const fetchData = async (path: string) => {
     path: `${path ? path : ""}`,
   });
 
-  return response.data;
+  return response.data.files;
 };
 
 export const useGetFiles = (path: string) => {

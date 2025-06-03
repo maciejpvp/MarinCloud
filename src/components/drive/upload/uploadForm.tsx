@@ -41,10 +41,11 @@ export const UploadForm = () => {
   };
 
   return (
-    <div className="relative w-full h-screen" onDragEnter={handleDrag}>
+    <div className="" onDragEnter={handleDrag}>
       {/* Upload Button */}
       <button
-        className="fixed bottom-4 right-10 z-50 bg-blue-500 hover:bg-blue-600 text-white text-3xl rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+        className="fixed bottom-4 right-10 z-50 bg-primary hover:bg-primary-600 hover:scale-[102%] transition-all duration-200  text-white text-3xl rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+        id="uploadButton"
         onClick={() => inputRef.current?.click()}
       >
         +
