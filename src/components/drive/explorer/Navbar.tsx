@@ -19,7 +19,7 @@ export const Navbar = ({ path }: NavbarProps) => {
 
   return (
     <div
-      className="flex flex-row gap-2 items-center"
+      className="flex flex-row gap-2 items-center h-10"
       style={{ width: "calc(100dvw - 50px)" }}
     >
       <ArrowLeftIcon className="size-6" onClick={undo} />

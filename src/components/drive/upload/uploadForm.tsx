@@ -24,9 +24,14 @@ export const UploadForm = () => {
     const files = e.dataTransfer.files;
 
     if (files && files.length > 0) {
-      console.log("Dropped files:", files);
-      uploadFile(files[0]);
-      // Handle your file upload here
+      const file = files[0];
+
+      uploadFile({
+        file,
+        onProgress: (percent) => {
+          console.log(`Upload progress: ${percent}%`);
+        },
+      });
     }
   };
 
@@ -34,9 +39,14 @@ export const UploadForm = () => {
     const files = e.target.files;
 
     if (files && files.length > 0) {
-      console.log("Selected files:", files);
-      uploadFile(files[0]);
-      // Handle your file upload here
+      const file = files[0];
+
+      uploadFile({
+        file,
+        onProgress: (percent) => {
+          console.log(`Upload progress: ${percent}%`);
+        },
+      });
     }
   };
 

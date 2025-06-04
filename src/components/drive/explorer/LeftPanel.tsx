@@ -1,18 +1,23 @@
-import { Button } from "@heroui/button";
+import {
+  UserIcon,
+  UserGroupIcon,
+  HeartIcon,
+  Cog6ToothIcon,
+} from "@heroicons/react/24/outline";
 
 import { LeftPanelButton } from "./LeftPanelButton";
 
 export const LeftPanel = () => {
   const panelButtons = [
-    { label: "My Drive", path: "drive" },
-    { label: "Shared with me", path: "shared" },
-    { label: "Favourites", path: "favourites" },
+    { label: "My Drive", path: "drive", icon: UserIcon },
+    { label: "Shared with me", path: "shared", icon: UserGroupIcon },
+    { label: "Favourites", path: "favourites", icon: HeartIcon },
   ];
 
   const path = location.pathname.split("/").at(1);
 
   return (
-    <div className="grid grid-rows-[0.25fr,1fr,auto]  h-full">
+    <div className="grid grid-rows-[0.25fr,1fr,auto] h-full px-1">
       <div className="flex flex-col items-start justify-start gap-1 ">
         <img alt="Logo" className="h-24 w-min " src="/logo.png" />
         <h1 className="font-semibold text-2xl px-1">Marin_Cloud</h1>
@@ -22,19 +27,25 @@ export const LeftPanel = () => {
           const key = button.label.replace(/\s+/g, "").toLowerCase();
 
           return (
-            <LeftPanelButton
-              key={key}
-              active={button.path === path}
-              label={button.label}
-              path={button.path}
-            />
+            <li key={key}>
+              <LeftPanelButton
+                Icon={button.icon}
+                active={button.path === path}
+                label={button.label}
+                path={button.path}
+              />
+            </li>
           );
         })}
       </ul>
 
-      <Button color="default" radius="sm">
-        Settings
-      </Button>
+      <LeftPanelButton
+        key="settings"
+        Icon={Cog6ToothIcon}
+        active={path === "settings"}
+        label="Settings"
+        path="settings"
+      />
     </div>
   );
 };

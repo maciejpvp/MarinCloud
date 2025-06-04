@@ -1,3 +1,9 @@
-export const FavouritesPage = () => {
-  return <p>1</p>;
+import DefaultLayout from "@/layouts/default";
+
+export const SharedPade = () => {
+  return (
+    <DefaultLayout>
+      <h1>Shared</h1>
+    </DefaultLayout>
+  );
 };

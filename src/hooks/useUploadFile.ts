@@ -2,9 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 
 import axiosInstance from "../lib/axios";
 
-const uploadFile = async (file: File) => {
+const uploadFile = async (
+  file: File,
+  onProgress?: (progress: number) => void,
+) => {
   const formData = new FormData();
-
   formData.append("file", file);
 
   const pathAfterDrive =
@@ -16,6 +18,14 @@ const uploadFile = async (file: File) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    onUploadProgress: (progressEvent) => {
+      if (progressEvent.total) {
+        const percent = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total,
+        );
+        if (onProgress) onProgress(percent);
+      }
+    },
   });
 
   return response.data;
@@ -23,7 +33,13 @@ const uploadFile = async (file: File) => {
 
 export const useUploadFile = () => {
   return useMutation({
-    mutationFn: uploadFile,
+    mutationFn: ({
+      file,
+      onProgress,
+    }: {
+      file: File;
+      onProgress?: (progress: number) => void;
+    }) => uploadFile(file, onProgress),
     onSuccess: () => {
       console.log("UPLOADED SUCCESSFULLY");
     },

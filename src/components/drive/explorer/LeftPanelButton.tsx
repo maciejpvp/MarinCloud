@@ -5,12 +5,14 @@ type LeftPanelButtonProps = {
   label: string;
   path: string;
   active: boolean;
+  Icon?: React.ElementType;
 };
 
 export const LeftPanelButton = ({
   label,
   active,
   path,
+  Icon,
 }: LeftPanelButtonProps) => {
   const navigate = useNavigate();
 
@@ -21,15 +23,14 @@ export const LeftPanelButton = ({
   };
 
   return (
-    <li>
-      <Button
-        className={`w-full flex justify-start text-md font-medium transition-all duration-500 ${active ? "text-black" : "text-white"}`}
-        color={active ? "primary" : "default"}
-        radius="sm"
-        onPress={handleClick}
-      >
-        {label}
-      </Button>
-    </li>
+    <Button
+      className={`w-full flex justify-start text-md font-medium  ${active ? "text-black" : "text-white"}`}
+      color={active ? "primary" : "default"}
+      radius="sm"
+      onPress={handleClick}
+    >
+      {Icon && <Icon className="size-7" />}
+      {label}
+    </Button>
   );
 };
