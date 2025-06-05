@@ -5,6 +5,7 @@ import { FileItemPopOver } from "./FileItemPopOver";
 
 import { FileType } from "@/types";
 import { getExtension } from "@/utils/utils";
+import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 
 type FileItemProps = {
   file: FileType;
@@ -14,6 +15,8 @@ export const FileItem = ({ file }: FileItemProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { fileName, isFolder, parentPath, userId, uuid } = file;
+
+  const { mutate: deleteFolder } = useDeleteFolder();
 
   let extension: string = "";
 
@@ -32,18 +35,25 @@ export const FileItem = ({ file }: FileItemProps) => {
   return (
     <>
       {isFolder ? (
-        <button
-          className="flex flex-row h-10 gap-2 items-center transition-transform duration-200 hover:translate-x-2"
-          onClick={handleFolder}
-        >
-          <div className="size-8">
-            <FileIcon
-              extension={extension}
-              {...defaultStyles[extension as keyof typeof defaultStyles]}
-            />
-          </div>
-          <p className="text-lg font-semibold">{file.fileName}</p>
-        </button>
+        <div className="flex flex-row items-center justify-start">
+          <button
+            className="flex flex-row h-10 gap-2 items-center transition-transform duration-200 hover:translate-x-2"
+            onClick={handleFolder}
+          >
+            <div className="size-8">
+              <FileIcon
+                extension={extension}
+                {...defaultStyles[extension as keyof typeof defaultStyles]}
+              />
+            </div>
+            <p className="text-lg font-semibold">{file.fileName}</p>
+          </button>
+          <FileItemPopOver
+            disableButton={["share", "download"]}
+            filename={fileName}
+            uuid={uuid}
+          />
+        </div>
       ) : (
         <div className="flex flex-row h-10 gap-2  items-center transition-transform duration-200 hover:translate-x-2">
           <div className="size-8">

@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import axiosInstance from "../lib/axios";
 
@@ -23,6 +23,7 @@ const uploadFile = async (
         const percent = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total,
         );
+
         if (onProgress) onProgress(percent);
       }
     },
@@ -31,7 +32,12 @@ const uploadFile = async (
   return response.data;
 };
 
-export const useUploadFile = () => {
+export const useUploadFile = (
+  setUploading: (value: boolean) => void,
+  setUploadProgress: (value: number) => void,
+) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       file,
@@ -40,8 +46,21 @@ export const useUploadFile = () => {
       file: File;
       onProgress?: (progress: number) => void;
     }) => uploadFile(file, onProgress),
-    onSuccess: () => {
-      console.log("UPLOADED SUCCESSFULLY");
+    onSuccess: (data) => {
+      setUploading(false);
+      setUploadProgress(0);
+
+      const file = data.item;
+      const pathAfterDrive =
+        location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
+
+      const queryKey = [`files/${pathAfterDrive}`];
+
+      queryClient.setQueryData<any[]>(queryKey, (old = []) => [...old, file]);
+    },
+    onError: () => {
+      setUploading(false);
+      setUploadProgress(0);
     },
   });
 };

@@ -1,24 +1,27 @@
 // import { Navbar } from "@/components/navbar";
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
+
 import { LeftPanel } from "@/components/drive/explorer/LeftPanel";
 import { Navbar } from "@/components/drive/explorer/Navbar";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { contextMenuStore } from "@/store/contextMenuStore";
-import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLeftPanelStore } from "@/store/leftPanelStore";
 
 export default function DefaultLayout({
   children,
   showNavbar = true,
 }: {
   children: React.ReactNode;
-  showNavbar: boolean;
+  showNavbar?: boolean;
 }) {
   const openContext = contextMenuStore((state) => state.openContext);
   const location = useLocation();
   const pathAfterDrive =
     location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
 
-  const [leftWidth, setLeftWidth] = useState(12);
+  const leftWidth = useLeftPanelStore((state) => state.leftWidth);
+  const setLeftWidth = useLeftPanelStore((state) => state.setLeftWidth);
   const containerRef = useRef<HTMLDivElement>(null);
   const isResizing = useRef(false);
 
@@ -30,7 +33,7 @@ export default function DefaultLayout({
       const rect = container.getBoundingClientRect();
       const offsetX = e.clientX - rect.left;
       const percent = (offsetX / rect.width) * 100;
-      const clamped = Math.max(10, Math.min(25, percent));
+      const clamped = Math.max(13, Math.min(25, percent));
 
       setLeftWidth(clamped);
     };
@@ -52,7 +55,11 @@ export default function DefaultLayout({
     <div className="relative flex flex-col h-screen ">
       <main className="container px-3 flex-grow pt-16">
         <div className="flex flex-col gap-4 w-max h-[calc(100dvh-80px)]">
-          <Navbar path={pathAfterDrive} />
+          {showNavbar ? (
+            <Navbar path={pathAfterDrive} />
+          ) : (
+            <div style={{ width: "calc(100dvw - 50px)" }} />
+          )}
           <div
             ref={containerRef}
             className="flex h-full relative flex-row gap-1"
@@ -69,13 +76,10 @@ export default function DefaultLayout({
               className="w-1 cursor-col-resize bg-content1  transition-colors"
               onMouseDown={() => (isResizing.current = true)}
             />
-            <div className="flex-1  h-full">{children}</div>
+            <div className="flex-1 px-1 h-full">{children}</div>
           </div>
         </div>
       </main>
-      <div className="absolute bottom-3 right-4">
-        <ThemeSwitch />
-      </div>
     </div>
   );
 }

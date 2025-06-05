@@ -19,11 +19,53 @@ import { useDeleteFile } from "@/hooks/useDeleteFile";
 type FileItemPopOverProps = {
   uuid: string;
   filename: string;
+  disableButton?: string[];
 };
 
-export const FileItemPopOver = ({ uuid, filename }: FileItemPopOverProps) => {
+export const FileItemPopOver = ({
+  uuid,
+  filename,
+  disableButton = [],
+}: FileItemPopOverProps) => {
   const { downloadFile } = useDownloadFile(uuid, filename);
   const { mutate: deleteFile } = useDeleteFile();
+
+  const withIconSize = (Icon: React.ElementType) => (
+    <Icon className="size-10" />
+  );
+
+  const dropdownActions = [
+    {
+      key: "download",
+      label: "Download",
+      description: "Download a file",
+      icon: withIconSize(ArrowDownTrayIcon),
+      onClick: downloadFile,
+    },
+    {
+      key: "share",
+      label: "Share File",
+      description: "Share file to friends",
+      icon: withIconSize(UserPlusIcon),
+    },
+    {
+      key: "edit",
+      label: "Rename",
+      description: "Change file name",
+      icon: withIconSize(PencilIcon),
+    },
+  ];
+
+  const dangerActions = [
+    {
+      key: "delete",
+      label: "Delete",
+      description: "Permanently delete the file",
+      icon: withIconSize(TrashIcon),
+      className: "text-danger",
+      onClick: () => deleteFile(uuid),
+    },
+  ];
 
   return (
     <Dropdown showArrow placement="bottom">
@@ -34,39 +76,33 @@ export const FileItemPopOver = ({ uuid, filename }: FileItemPopOverProps) => {
       </DropdownTrigger>
       <DropdownMenu>
         <DropdownSection showDivider title="Actions">
-          <DropdownItem
-            key="download"
-            description="Download a file"
-            startContent={<ArrowDownTrayIcon className="size-10" />}
-            onClick={downloadFile}
-          >
-            download
-          </DropdownItem>
-          <DropdownItem
-            key="share"
-            description="Share file to friends"
-            startContent={<UserPlusIcon className="size-10" />}
-          >
-            Share File
-          </DropdownItem>
-          <DropdownItem
-            key="edit"
-            description="Change file name"
-            startContent={<PencilIcon className="size-10" />}
-          >
-            Rename
-          </DropdownItem>
+          {dropdownActions
+            .filter(({ key }) => !disableButton.includes(key))
+            .map(({ key, label, description, icon, onClick }) => (
+              <DropdownItem
+                key={key}
+                description={description}
+                startContent={icon}
+                onClick={onClick}
+              >
+                {label}
+              </DropdownItem>
+            ))}
         </DropdownSection>
         <DropdownSection title="Danger zone">
-          <DropdownItem
-            key="delete"
-            className="text-danger"
-            description="Permanently delete the file"
-            startContent={<TrashIcon className="size-10" />}
-            onClick={() => deleteFile(uuid)}
-          >
-            Delete
-          </DropdownItem>
+          {dangerActions.map(
+            ({ key, label, description, icon, className, onClick }) => (
+              <DropdownItem
+                key={key}
+                className={className}
+                description={description}
+                startContent={icon}
+                onClick={onClick}
+              >
+                {label}
+              </DropdownItem>
+            ),
+          )}
         </DropdownSection>
       </DropdownMenu>
     </Dropdown>
