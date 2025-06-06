@@ -10,8 +10,18 @@ import { LeftPanelButton } from "./LeftPanelButton";
 export const LeftPanel = () => {
   const panelButtons = [
     { label: "My Drive", path: "drive", icon: UserIcon },
-    { label: "Shared with me", path: "shared", icon: UserGroupIcon },
-    { label: "Favourites", path: "favourites", icon: HeartIcon },
+    {
+      label: "Shared with me",
+      path: "shared",
+      icon: UserGroupIcon,
+      available: false,
+    },
+    {
+      label: "Favourites",
+      path: "favourites",
+      icon: HeartIcon,
+      available: false,
+    },
   ];
 
   const path = location.pathname.split("/").at(1);
@@ -31,6 +41,7 @@ export const LeftPanel = () => {
               <LeftPanelButton
                 Icon={button.icon}
                 active={button.path === path}
+                available={button.available}
                 label={button.label}
                 path={button.path}
               />

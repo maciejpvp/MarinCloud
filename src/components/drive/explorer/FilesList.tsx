@@ -1,9 +1,12 @@
 import { Skeleton } from "@heroui/skeleton";
-import { addToast } from "@heroui/toast";
+import { Button } from "@heroui/button";
 
 import { FileItem } from "./FileItem";
 
 import { FileType } from "@/types";
+import { useCheckboxStore } from "@/store/checkboxStore";
+import { useDeleteFile } from "@/hooks/useDeleteFile";
+import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 
 type ListProps = {
   files: FileType[];
@@ -11,6 +14,29 @@ type ListProps = {
 };
 
 export const FilesList = ({ files, isLoading }: ListProps) => {
+  const { mutate: deleteFile } = useDeleteFile();
+  const { mutate: deleteFolder } = useDeleteFolder();
+  const filesUuids = useCheckboxStore((store) => store.activeFilesCheckboxes);
+  const foldersUuids = useCheckboxStore(
+    (store) => store.activeFoldersCheckboxes,
+  );
+  const restoreDefault = useCheckboxStore((store) => store.restoreDefault);
+
+  const isDisabled: boolean = !(
+    filesUuids.length > 0 || foldersUuids.length > 0
+  );
+
+  const deleteFiles = () => {
+    if (filesUuids.length !== 0) {
+      deleteFile(filesUuids);
+      restoreDefault();
+    }
+    if (foldersUuids.length !== 0) {
+      deleteFolder(foldersUuids);
+      restoreDefault();
+    }
+  };
+
   if (isLoading) {
     return (
       <div>
@@ -40,6 +66,16 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
 
   return (
     <div>
+      <div className="flex justify-end">
+        <Button
+          className={`${isDisabled ? "bg-content2 opacity-50  pointer-events-none" : "bg-danger-300 opacity-100 pointer-events-auto cursor-pointer"}`}
+          isDisabled={isDisabled}
+          size="md"
+          onPress={deleteFiles}
+        >
+          <span className="font-[600]">Delete</span>
+        </Button>
+      </div>
       <ul className="flex flex-col gap-1">
         {files.map((file) => (
           <li key={file.uuid}>

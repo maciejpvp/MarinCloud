@@ -1,10 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { Checkbox } from "@heroui/checkbox";
 import { FileIcon, defaultStyles } from "react-file-icon";
 
 import { FileItemPopOver } from "./FileItemPopOver";
 
 import { FileType } from "@/types";
 import { getExtension } from "@/utils/utils";
+import { useCheckboxStore } from "@/store/checkboxStore";
 
 type FileItemProps = {
   file: FileType;
@@ -13,6 +15,10 @@ type FileItemProps = {
 export const FileItem = ({ file }: FileItemProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const pushCheckbox = useCheckboxStore((store) => store.pushCheckbox);
+  const removeCheckbox = useCheckboxStore((store) => store.removeCheckbox);
+
   const { fileName, isFolder, uuid, isOptimistic } = file;
 
   let extension: string = "";
@@ -30,12 +36,21 @@ export const FileItem = ({ file }: FileItemProps) => {
     extension = getExtension(fileName);
   }
 
+  const onValueChange = (state: boolean) => {
+    if (state) {
+      pushCheckbox(uuid, isFolder);
+    } else {
+      removeCheckbox(uuid, isFolder);
+    }
+  };
+
   return (
     <>
       {isFolder ? (
         <div
-          className={`flex flex-row items-center justify-start transition-all duration-100 ${isOptimistic ? "opacity-40" : ""}`}
+          className={`flex flex-row gap-2 items-center justify-start transition-all duration-100 ${isOptimistic ? "opacity-40" : ""}`}
         >
+          <Checkbox onValueChange={onValueChange} />
           <button
             className="flex flex-row h-10 gap-2 items-center transition-transform duration-200 hover:translate-x-2"
             onClick={handleFolder}
@@ -60,6 +75,7 @@ export const FileItem = ({ file }: FileItemProps) => {
         <div
           className={`flex flex-row h-10 gap-2  items-center transition-transform duration-200 hover:translate-x-2 ${isOptimistic ? "opacity-40" : ""}`}
         >
+          <Checkbox onValueChange={onValueChange} />
           <div className="size-8">
             <FileIcon
               extension={extension}

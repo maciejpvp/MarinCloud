@@ -70,7 +70,7 @@ export const FileItemPopOver = ({
       icon: withIconSize(TrashIcon),
       className: "text-danger",
       onClick: () => {
-        isFolder ? deleteFolder(uuid) : deleteFile(uuid);
+        isFolder ? deleteFolder([uuid]) : deleteFile([uuid]);
       },
     },
   ];

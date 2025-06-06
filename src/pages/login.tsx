@@ -6,7 +6,7 @@ export const LoginPage = () => {
     window.location.href =
       "https://file-system-maciejpvp-nyasdads7-new.auth.eu-central-1.amazoncognito.com/oauth2/authorize" +
       "?identity_provider=Google" +
-      "&redirect_uri=http://localhost:3000/callback" +
+      "&redirect_uri=https://d1p6jpp4gceiew.cloudfront.net/callback" +
       "&response_type=CODE" +
       "&client_id=4h26556loh5jtcg76s3s92bj5i" +
       "&scope=openid+profile+email";

@@ -3,12 +3,12 @@ import { addToast } from "@heroui/toast";
 
 import axiosInstance from "../lib/axios";
 
-let globalUuid: string = "";
+let globalUuids: string[] = [];
 
-const deleteFile = async (uuid: string) => {
+const deleteFile = async (uuids: string[]) => {
   const response = await axiosInstance.delete("/delete-folder", {
     data: {
-      uuid,
+      uuids,
     },
   });
 
@@ -25,22 +25,22 @@ export const useDeleteFolder = () => {
 
   return useMutation({
     mutationFn: deleteFile,
-    onMutate: (uuid: string) => {
-      globalUuid = uuid;
+    onMutate: (uuid: string | string[]) => {
+      globalUuids = Array.isArray(uuid) ? uuid : [uuid];
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
         old.map((item) =>
-          item.uuid === uuid ? { ...item, isOptimistic: true } : item,
+          globalUuids.includes(item.uuid)
+            ? { ...item, isOptimistic: true }
+            : item,
         ),
       );
     },
 
     onSuccess: () => {
-      queryClient.setQueryData<any[]>(queryKey, (old = []) => {
-        const newArray = old.filter((item) => item.uuid !== globalUuid);
-
-        return newArray;
-      });
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.filter((item) => !globalUuids.includes(item.uuid)),
+      );
 
       addToast({
         title: "Deleted Successfully",
@@ -52,7 +52,9 @@ export const useDeleteFolder = () => {
     onError: () => {
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
         old.map((item) =>
-          item.uuid === globalUuid ? { ...item, isOptimistic: false } : item,
+          globalUuids.includes(item.uuid)
+            ? { ...item, isOptimistic: false }
+            : item,
         ),
       );
 

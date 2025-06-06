@@ -22,7 +22,7 @@ export const CallbackPage = () => {
             grant_type: "authorization_code",
             client_id: "4h26556loh5jtcg76s3s92bj5i",
             code,
-            redirect_uri: "http://localhost:3000/callback",
+            redirect_uri: "https://d1p6jpp4gceiew.cloudfront.net/callback",
           }),
         },
       );

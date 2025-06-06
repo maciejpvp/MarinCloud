@@ -1,10 +1,8 @@
-// import { Navbar } from "@/components/navbar";
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 import { LeftPanel } from "@/components/drive/explorer/LeftPanel";
 import { Navbar } from "@/components/drive/explorer/Navbar";
-import { ThemeSwitch } from "@/components/theme-switch";
 import { contextMenuStore } from "@/store/contextMenuStore";
 import { useLeftPanelStore } from "@/store/leftPanelStore";
 

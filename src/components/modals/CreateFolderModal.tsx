@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   Modal,
   ModalContent,
@@ -21,7 +20,7 @@ export const CreateFileModal = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
-    console.log(name);
+
     onOpenChange();
     createFolder(name);
   };

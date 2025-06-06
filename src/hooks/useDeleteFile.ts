@@ -3,12 +3,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import axiosInstance from "../lib/axios";
 
-let globalUuid: string = ""; //Global UUID so onSuccess has access to provided uuid;
+let globalUuids: string[] = []; //Global UUID so onSuccess has access to provided uuid;
 
-const deleteFile = async (uuid: string) => {
+const deleteFile = async (uuids: string[]) => {
   const response = await axiosInstance.delete("/delete-file", {
     data: {
-      uuid,
+      uuids,
     },
   });
 
@@ -26,12 +26,12 @@ export const useDeleteFile = () => {
   return useMutation({
     mutationFn: deleteFile,
 
-    onMutate: (uuid: string) => {
-      globalUuid = uuid;
+    onMutate: (uuids: string[]) => {
+      globalUuids = uuids;
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
         old.map((item) =>
-          item.uuid === uuid ? { ...item, isOptimistic: true } : item,
+          uuids.includes(item.uuid) ? { ...item, isOptimistic: true } : item,
         ),
       );
     },
@@ -44,7 +44,7 @@ export const useDeleteFile = () => {
       });
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) => {
-        const newArray = old.filter((item) => item.uuid !== globalUuid);
+        const newArray = old.filter((item) => !globalUuids.includes(item.uuid));
 
         return newArray;
       });
@@ -52,7 +52,9 @@ export const useDeleteFile = () => {
     onError: () => {
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
         old.map((item) =>
-          item.uuid === globalUuid ? { ...item, isOptimistic: false } : item,
+          globalUuids.includes(item.uuid)
+            ? { ...item, isOptimistic: false }
+            : item,
         ),
       );
 
