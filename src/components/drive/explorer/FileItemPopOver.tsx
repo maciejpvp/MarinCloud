@@ -15,20 +15,26 @@ import {
 import { Bars } from "@/components/icons";
 import { useDownloadFile } from "@/hooks/useDownloadFile";
 import { useDeleteFile } from "@/hooks/useDeleteFile";
+import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 
 type FileItemPopOverProps = {
   uuid: string;
   filename: string;
   disableButton?: string[];
+  isFolder?: boolean;
+  isOptimistic?: boolean;
 };
 
 export const FileItemPopOver = ({
   uuid,
   filename,
   disableButton = [],
+  isFolder = false,
+  isOptimistic = false,
 }: FileItemPopOverProps) => {
   const { downloadFile } = useDownloadFile(uuid, filename);
   const { mutate: deleteFile } = useDeleteFile();
+  const { mutate: deleteFolder } = useDeleteFolder();
 
   const withIconSize = (Icon: React.ElementType) => (
     <Icon className="size-10" />
@@ -63,12 +69,14 @@ export const FileItemPopOver = ({
       description: "Permanently delete the file",
       icon: withIconSize(TrashIcon),
       className: "text-danger",
-      onClick: () => deleteFile(uuid),
+      onClick: () => {
+        isFolder ? deleteFolder(uuid) : deleteFile(uuid);
+      },
     },
   ];
 
   return (
-    <Dropdown showArrow placement="bottom">
+    <Dropdown showArrow isDisabled={isOptimistic} placement="bottom">
       <DropdownTrigger>
         <button>
           <Bars />

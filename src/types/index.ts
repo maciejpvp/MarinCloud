@@ -10,4 +10,5 @@ export type FileType = {
   parentPath: string;
   userId: string;
   uuid: string;
+  isOptimistic?: boolean;
 };

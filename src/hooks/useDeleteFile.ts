@@ -1,7 +1,9 @@
+import { addToast } from "@heroui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import axiosInstance from "../lib/axios";
-import { addToast } from "@heroui/toast";
+
+let globalUuid: string = ""; //Global UUID so onSuccess has access to provided uuid;
 
 const deleteFile = async (uuid: string) => {
   const response = await axiosInstance.delete("/delete-file", {
@@ -16,31 +18,48 @@ const deleteFile = async (uuid: string) => {
 export const useDeleteFile = () => {
   const queryClient = useQueryClient();
 
+  const pathAfterDrive =
+    location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
+
+  const queryKey = [`files/${pathAfterDrive}`];
+
   return useMutation({
     mutationFn: deleteFile,
-    onError: () => {
-      addToast({
-        title: "Deletion Failed",
-        description: "Unable to delete file, please try again",
-        color: "danger",
-      });
+
+    onMutate: (uuid: string) => {
+      globalUuid = uuid;
+
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.map((item) =>
+          item.uuid === uuid ? { ...item, isOptimistic: true } : item,
+        ),
+      );
     },
-    onSuccess: (data) => {
-      const pathAfterDrive =
-        location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
 
-      const queryKey = [`files/${pathAfterDrive}`];
-
-      queryClient.setQueryData<any[]>(queryKey, (old = []) => {
-        const uuid = data.dynamoResult.Item.uuid;
-        const newArray = old.filter((item) => item.uuid !== uuid);
-
-        return newArray;
-      });
+    onSuccess: () => {
       addToast({
         title: "Deleted Successfully",
         description: "File Deleted Successfully.",
         color: "success",
+      });
+
+      queryClient.setQueryData<any[]>(queryKey, (old = []) => {
+        const newArray = old.filter((item) => item.uuid !== globalUuid);
+
+        return newArray;
+      });
+    },
+    onError: () => {
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.map((item) =>
+          item.uuid === globalUuid ? { ...item, isOptimistic: false } : item,
+        ),
+      );
+
+      addToast({
+        title: "Deletion Failed",
+        description: "Unable to delete file, please try again",
+        color: "danger",
       });
     },
   });

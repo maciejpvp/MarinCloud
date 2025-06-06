@@ -5,7 +5,6 @@ import { FileItemPopOver } from "./FileItemPopOver";
 
 import { FileType } from "@/types";
 import { getExtension } from "@/utils/utils";
-import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 
 type FileItemProps = {
   file: FileType;
@@ -14,13 +13,12 @@ type FileItemProps = {
 export const FileItem = ({ file }: FileItemProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { fileName, isFolder, parentPath, userId, uuid } = file;
-
-  const { mutate: deleteFolder } = useDeleteFolder();
+  const { fileName, isFolder, uuid, isOptimistic } = file;
 
   let extension: string = "";
 
   const handleFolder = () => {
+    if (isOptimistic) return;
     const basePath = location.pathname.replace(/^\/drive\/?/, "");
 
     const newPath = `/drive/${basePath ? basePath + "/" : ""}${fileName}`;
@@ -35,7 +33,9 @@ export const FileItem = ({ file }: FileItemProps) => {
   return (
     <>
       {isFolder ? (
-        <div className="flex flex-row items-center justify-start">
+        <div
+          className={`flex flex-row items-center justify-start transition-all duration-100 ${isOptimistic ? "opacity-40" : ""}`}
+        >
           <button
             className="flex flex-row h-10 gap-2 items-center transition-transform duration-200 hover:translate-x-2"
             onClick={handleFolder}
@@ -51,11 +51,15 @@ export const FileItem = ({ file }: FileItemProps) => {
           <FileItemPopOver
             disableButton={["share", "download"]}
             filename={fileName}
+            isFolder={true}
+            isOptimistic={isOptimistic}
             uuid={uuid}
           />
         </div>
       ) : (
-        <div className="flex flex-row h-10 gap-2  items-center transition-transform duration-200 hover:translate-x-2">
+        <div
+          className={`flex flex-row h-10 gap-2  items-center transition-transform duration-200 hover:translate-x-2 ${isOptimistic ? "opacity-40" : ""}`}
+        >
           <div className="size-8">
             <FileIcon
               extension={extension}
@@ -63,7 +67,11 @@ export const FileItem = ({ file }: FileItemProps) => {
             />
           </div>
           <p className="text-lg font-semibold">{file.fileName}</p>
-          <FileItemPopOver filename={fileName} uuid={uuid} />
+          <FileItemPopOver
+            filename={fileName}
+            isOptimistic={isOptimistic}
+            uuid={uuid}
+          />
         </div>
       )}
     </>

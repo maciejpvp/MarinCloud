@@ -7,6 +7,7 @@ const uploadFile = async (
   onProgress?: (progress: number) => void,
 ) => {
   const formData = new FormData();
+
   formData.append("file", file);
 
   const pathAfterDrive =
@@ -38,6 +39,11 @@ export const useUploadFile = (
 ) => {
   const queryClient = useQueryClient();
 
+  const pathAfterDrive =
+    location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
+
+  const queryKey = [`files/${pathAfterDrive}`];
+
   return useMutation({
     mutationFn: ({
       file,
@@ -46,19 +52,47 @@ export const useUploadFile = (
       file: File;
       onProgress?: (progress: number) => void;
     }) => uploadFile(file, onProgress),
+
+    onMutate: ({
+      file,
+      onProgress: _onProgress,
+    }: {
+      file: File;
+      onProgress?: (progress: number) => void;
+    }) => {
+      const fileName = file.name;
+
+      const tempFile = {
+        fileName,
+        uuid: "temp",
+        isFolder: false,
+        isOptimistic: true,
+      };
+
+      queryClient.setQueryData<any[]>(queryKey, (old = []) => [
+        ...old,
+        tempFile,
+      ]);
+    },
+
     onSuccess: (data) => {
       setUploading(false);
       setUploadProgress(0);
 
       const file = data.item;
-      const pathAfterDrive =
-        location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
 
-      const queryKey = [`files/${pathAfterDrive}`];
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.filter((item) => item.uuid !== "temp"),
+      );
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) => [...old, file]);
     },
+
     onError: () => {
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.filter((item) => item.uuid !== "temp"),
+      );
+
       setUploading(false);
       setUploadProgress(0);
     },

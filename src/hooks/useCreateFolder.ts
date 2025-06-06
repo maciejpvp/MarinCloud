@@ -17,19 +17,42 @@ const createFolder = async (name: string) => {
 export const useCreateFolder = () => {
   const queryClient = useQueryClient();
 
+  const pathAfterDrive =
+    location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
+
+  const queryKey = [`files/${pathAfterDrive}`];
+
   return useMutation({
     mutationFn: createFolder,
+    onMutate: (name: string) => {
+      const tempFolder = {
+        fileName: name,
+        isFolder: true,
+        uuid: "temp",
+        isOptimistic: true, // so component know its optimistic
+      };
+
+      queryClient.setQueryData<any[]>(queryKey, (old = []) => [
+        ...old,
+        tempFolder,
+      ]);
+    },
     onSuccess: (data) => {
       const newFolder = data.item;
-      const pathAfterDrive =
-        location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
 
-      const queryKey = [`files/${pathAfterDrive}`];
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.filter((item) => item.uuid !== "temp"),
+      );
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) => [
         ...old,
         newFolder,
       ]);
+    },
+    onError: () => {
+      queryClient.setQueryData<any[]>(queryKey, (old = []) =>
+        old.filter((item) => item.uuid !== "temp"),
+      );
     },
   });
 };
