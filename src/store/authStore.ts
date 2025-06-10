@@ -42,6 +42,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     const idToken = data.id_token;
 
+    console.log(idToken);
+
     set({ idToken });
   },
   refresh: () => {},

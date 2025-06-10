@@ -7,6 +7,7 @@ import { FileType } from "@/types";
 import { useCheckboxStore } from "@/store/checkboxStore";
 import { useDeleteFile } from "@/hooks/useDeleteFile";
 import { useDeleteFolder } from "@/hooks/useDeleteFolder";
+import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
 
 type ListProps = {
   files: FileType[];
@@ -22,6 +23,9 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
   );
   const restoreDefault = useCheckboxStore((store) => store.restoreDefault);
 
+  const setCallback = useDeleteConfirmModalStore((store) => store.setCallback);
+  const open = useDeleteConfirmModalStore((store) => store.open);
+
   const isDisabled: boolean = !(
     filesUuids.length > 0 || foldersUuids.length > 0
   );
@@ -35,6 +39,11 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
       deleteFolder(foldersUuids);
       restoreDefault();
     }
+  };
+
+  const handleClick = () => {
+    setCallback(deleteFiles);
+    open();
   };
 
   if (isLoading) {
@@ -71,7 +80,7 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
           className={`${isDisabled ? "bg-content2 opacity-50  pointer-events-none" : "bg-danger-300 opacity-100 pointer-events-auto cursor-pointer"}`}
           isDisabled={isDisabled}
           size="md"
-          onPress={deleteFiles}
+          onPress={handleClick}
         >
           <span className="font-[600]">Delete</span>
         </Button>

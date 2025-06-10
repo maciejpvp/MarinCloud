@@ -10,6 +10,8 @@ export const CallbackPage = () => {
   const [error, setError] = useState<boolean>(false);
 
   const getToken = async (code: string) => {
+    const redirectUrl = import.meta.env.VITE_REDIRECT_URL;
+
     try {
       const response = await fetch(
         "https://file-system-maciejpvp-nyasdads7-new.auth.eu-central-1.amazoncognito.com/oauth2/token",
@@ -22,7 +24,7 @@ export const CallbackPage = () => {
             grant_type: "authorization_code",
             client_id: "4h26556loh5jtcg76s3s92bj5i",
             code,
-            redirect_uri: "https://d1p6jpp4gceiew.cloudfront.net/callback",
+            redirect_uri: redirectUrl,
           }),
         },
       );

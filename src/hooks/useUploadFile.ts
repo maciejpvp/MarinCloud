@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 import axiosInstance from "../lib/axios";
 
@@ -6,18 +7,21 @@ const uploadFile = async (
   file: File,
   onProgress?: (progress: number) => void,
 ) => {
-  const formData = new FormData();
-
-  formData.append("file", file);
-
   const pathAfterDrive =
     location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
 
-  formData.append("path", `${pathAfterDrive}`);
+  const filename = file.name;
 
-  const response = await axiosInstance.post("/upload-file", formData, {
+  const response = await axiosInstance.post("/upload-file", {
+    filename,
+    path: pathAfterDrive,
+  });
+
+  const uploadLink = response.data.signedUrl;
+
+  await axios.put(uploadLink, file, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": `${file.type}`,
     },
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total) {

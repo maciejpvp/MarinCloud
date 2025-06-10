@@ -16,6 +16,7 @@ import { Bars } from "@/components/icons";
 import { useDownloadFile } from "@/hooks/useDownloadFile";
 import { useDeleteFile } from "@/hooks/useDeleteFile";
 import { useDeleteFolder } from "@/hooks/useDeleteFolder";
+import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
 
 type FileItemPopOverProps = {
   uuid: string;
@@ -35,6 +36,19 @@ export const FileItemPopOver = ({
   const { downloadFile } = useDownloadFile(uuid, filename);
   const { mutate: deleteFile } = useDeleteFile();
   const { mutate: deleteFolder } = useDeleteFolder();
+
+  const setCallback = useDeleteConfirmModalStore((store) => store.setCallback);
+  const open = useDeleteConfirmModalStore((store) => store.open);
+
+  const handleDelete = () => {
+    if (isFolder) {
+      setCallback(() => deleteFolder([uuid]));
+    } else {
+      setCallback(() => deleteFile([uuid]));
+    }
+
+    open();
+  };
 
   const withIconSize = (Icon: React.ElementType) => (
     <Icon className="size-10" />
@@ -69,9 +83,7 @@ export const FileItemPopOver = ({
       description: "Permanently delete the file",
       icon: withIconSize(TrashIcon),
       className: "text-danger",
-      onClick: () => {
-        isFolder ? deleteFolder([uuid]) : deleteFile([uuid]);
-      },
+      onClick: handleDelete,
     },
   ];
 

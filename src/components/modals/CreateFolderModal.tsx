@@ -37,9 +37,9 @@ export const CreateFileModal = () => {
                 </ModalHeader>
                 <ModalBody>
                   <Input
-                    name="name"
                     required
                     label="Folder Name"
+                    name="name"
                     placeholder="New Folder"
                   />
                 </ModalBody>
