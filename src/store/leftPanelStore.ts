@@ -6,6 +6,6 @@ interface LeftPanelState {
 }
 
 export const useLeftPanelStore = create<LeftPanelState>((set) => ({
-  leftWidth: 13,
+  leftWidth: 300,
   setLeftWidth: (number) => set({ leftWidth: number }),
 }));

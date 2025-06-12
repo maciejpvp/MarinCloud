@@ -43,10 +43,26 @@ export const useDeleteFile = () => {
         color: "success",
       });
 
+      let cleanedStorage = 0;
+
       queryClient.setQueryData<any[]>(queryKey, (old = []) => {
-        const newArray = old.filter((item) => !globalUuids.includes(item.uuid));
+        const newArray = old.filter((item) => {
+          const shouldDelete = globalUuids.includes(item.uuid);
+
+          if (shouldDelete) {
+            cleanedStorage += item.size;
+          }
+
+          return !shouldDelete;
+        });
 
         return newArray;
+      });
+
+      queryClient.setQueryData<number>(["usedStorage"], (old = 0) => {
+        const newValue = old - (cleanedStorage ?? 0);
+
+        return newValue;
       });
     },
     onError: () => {

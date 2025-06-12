@@ -7,6 +7,8 @@ import {
 
 import { LeftPanelButton } from "./LeftPanelButton";
 
+import { UsedStorage } from "@/components/usedStorage/UsedStorage";
+
 export const LeftPanel = () => {
   const panelButtons = [
     { label: "My Drive", path: "drive", icon: UserIcon },
@@ -27,12 +29,12 @@ export const LeftPanel = () => {
   const path = location.pathname.split("/").at(1);
 
   return (
-    <div className="grid grid-rows-[0.25fr,1fr,auto] h-full px-1">
+    <div className="grid grid-rows-[0.25fr,0.25fr,0.75fr,auto] h-full px-1">
       <div className="flex flex-col items-start justify-start gap-1 ">
         <img alt="Logo" className="h-24 w-min " src="/logo.png" />
         <h1 className="font-semibold text-2xl px-1">Marin_Cloud</h1>
       </div>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-3 ">
         {panelButtons.map((button) => {
           const key = button.label.replace(/\s+/g, "").toLowerCase();
 
@@ -49,6 +51,8 @@ export const LeftPanel = () => {
           );
         })}
       </ul>
+
+      <UsedStorage />
 
       <LeftPanelButton
         key="settings"

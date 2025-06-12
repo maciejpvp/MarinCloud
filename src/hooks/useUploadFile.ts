@@ -15,14 +15,21 @@ const uploadFile = async (
   const response = await axiosInstance.post("/upload-file", {
     filename,
     path: pathAfterDrive,
+    filesize: file.size,
   });
 
   const uploadLink = response.data.signedUrl;
 
-  await axios.put(uploadLink, file, {
-    headers: {
-      "Content-Type": `${file.type}`,
-    },
+  const formData = new FormData();
+
+  const fields: Record<string, string> = response.data.fields;
+
+  Object.entries(fields).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  formData.append("file", file);
+
+  await axios.post(uploadLink, formData, {
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total) {
         const percent = Math.round(
@@ -77,19 +84,25 @@ export const useUploadFile = (
         ...old,
         tempFile,
       ]);
+
+      return { fileSize: file.size };
     },
 
-    onSuccess: (data) => {
+    onSuccess: (data, __, context) => {
       setUploading(false);
       setUploadProgress(0);
 
-      const file = data.item;
+      const file = { ...data.item, size: context.fileSize ?? 0 };
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
         old.filter((item) => item.uuid !== "temp"),
       );
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) => [...old, file]);
+
+      queryClient.setQueryData<number>(["usedStorage"], (old = 0) => {
+        return old + (context.fileSize ?? 0);
+      });
     },
 
     onError: () => {

@@ -30,8 +30,7 @@ export default function DefaultLayout({
       const container = containerRef.current;
       const rect = container.getBoundingClientRect();
       const offsetX = e.clientX - rect.left;
-      const percent = (offsetX / rect.width) * 100;
-      const clamped = Math.max(13, Math.min(25, percent));
+      const clamped = Math.max(200, Math.min(500, offsetX));
 
       setLeftWidth(clamped);
     };
@@ -61,12 +60,8 @@ export default function DefaultLayout({
           <div
             ref={containerRef}
             className="flex h-full relative flex-row gap-1"
-            onContextMenu={(e) => {
-              e.preventDefault();
-              openContext([e.clientX, e.clientY]);
-            }}
           >
-            <div className="h-full" style={{ width: `${leftWidth}%` }}>
+            <div className="h-full" style={{ width: `${leftWidth}px` }}>
               <LeftPanel />
             </div>
             {/* Resizer Handle */}

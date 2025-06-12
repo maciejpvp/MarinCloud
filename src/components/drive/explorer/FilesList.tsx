@@ -8,6 +8,7 @@ import { useCheckboxStore } from "@/store/checkboxStore";
 import { useDeleteFile } from "@/hooks/useDeleteFile";
 import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
+import { contextMenuStore } from "@/store/contextMenuStore";
 
 type ListProps = {
   files: FileType[];
@@ -25,6 +26,7 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
 
   const setCallback = useDeleteConfirmModalStore((store) => store.setCallback);
   const open = useDeleteConfirmModalStore((store) => store.open);
+  const openContext = contextMenuStore((store) => store.openContext);
 
   const isDisabled: boolean = !(
     filesUuids.length > 0 || foldersUuids.length > 0
@@ -62,7 +64,13 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
 
   if (files.length === 0) {
     return (
-      <div className="flex flex-col h-full justify-center items-center">
+      <div
+        className="flex flex-col h-full justify-center items-center"
+        onContextMenu={(e) => {
+          e.preventDefault();
+          openContext([e.clientX, e.clientY]);
+        }}
+      >
         <h1 className="text-xl font-semibold text-default-800">
           Looks a bit empty here
         </h1>
@@ -74,7 +82,13 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
   }
 
   return (
-    <div>
+    <div
+      className="h-full"
+      onContextMenu={(e) => {
+        e.preventDefault();
+        openContext([e.clientX, e.clientY]);
+      }}
+    >
       <div className="flex justify-end">
         <Button
           className={`${isDisabled ? "bg-content2 opacity-50  pointer-events-none" : "bg-danger-300 opacity-100 pointer-events-auto cursor-pointer"}`}
