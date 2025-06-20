@@ -17,6 +17,7 @@ import { useDownloadFile } from "@/hooks/useDownloadFile";
 import { useDeleteFile } from "@/hooks/useDeleteFile";
 import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
+import { useShareFileModalStore } from "@/store/shareFileModalStore";
 
 type FileItemPopOverProps = {
   uuid: string;
@@ -24,6 +25,7 @@ type FileItemPopOverProps = {
   disableButton?: string[];
   isFolder?: boolean;
   isOptimistic?: boolean;
+  sharedTo?: string[];
 };
 
 export const FileItemPopOver = ({
@@ -32,13 +34,15 @@ export const FileItemPopOver = ({
   disableButton = [],
   isFolder = false,
   isOptimistic = false,
+  sharedTo = [],
 }: FileItemPopOverProps) => {
   const { downloadFile } = useDownloadFile(uuid, filename);
   const { mutate: deleteFile } = useDeleteFile();
   const { mutate: deleteFolder } = useDeleteFolder();
 
   const setCallback = useDeleteConfirmModalStore((store) => store.setCallback);
-  const open = useDeleteConfirmModalStore((store) => store.open);
+  const openDeleteModal = useDeleteConfirmModalStore((store) => store.open);
+  const openShareModal = useShareFileModalStore((store) => store.open);
 
   const handleDelete = () => {
     if (isFolder) {
@@ -47,7 +51,11 @@ export const FileItemPopOver = ({
       setCallback(() => deleteFile([uuid]));
     }
 
-    open();
+    openDeleteModal();
+  };
+
+  const handleOpenShareModal = () => {
+    openShareModal({ uuid, filename, emails: [...sharedTo] });
   };
 
   const withIconSize = (Icon: React.ElementType) => (
@@ -67,6 +75,7 @@ export const FileItemPopOver = ({
       label: "Share File",
       description: "Share file to friends",
       icon: withIconSize(UserPlusIcon),
+      onClick: handleOpenShareModal,
     },
     {
       key: "edit",
@@ -86,6 +95,10 @@ export const FileItemPopOver = ({
       onClick: handleDelete,
     },
   ];
+
+  const enabledDangerActions = dangerActions.filter(
+    ({ key }) => !disableButton.includes(key),
+  );
 
   return (
     <Dropdown showArrow isDisabled={isOptimistic} placement="bottom">
@@ -109,8 +122,10 @@ export const FileItemPopOver = ({
               </DropdownItem>
             ))}
         </DropdownSection>
-        <DropdownSection title="Danger zone">
-          {dangerActions.map(
+        <DropdownSection
+          title={enabledDangerActions.length === 0 ? "" : "Danger zone"}
+        >
+          {enabledDangerActions.map(
             ({ key, label, description, icon, className, onClick }) => (
               <DropdownItem
                 key={key}

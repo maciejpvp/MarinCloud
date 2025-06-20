@@ -10,10 +10,11 @@ const fetchData = async (path: string) => {
   return response.data.files;
 };
 
-export const useGetFiles = (path: string) => {
+export const useGetFiles = (path: string, shouldFetch: boolean = true) => {
   return useQuery({
     queryKey: [`files/${path}`],
     queryFn: () => fetchData(path),
     staleTime: 10 * 60 * 1000, //10 min
+    enabled: shouldFetch,
   });
 };

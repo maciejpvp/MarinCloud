@@ -19,7 +19,8 @@ export const FileItem = ({ file }: FileItemProps) => {
   const pushCheckbox = useCheckboxStore((store) => store.pushCheckbox);
   const removeCheckbox = useCheckboxStore((store) => store.removeCheckbox);
 
-  const { fileName, isFolder, uuid, isOptimistic } = file;
+  const { fileName, isFolder, uuid, isOptimistic, sharedTo } = file;
+  const pathStartsWith = location.pathname.split("/").at(1);
 
   let extension: string = "";
 
@@ -68,6 +69,7 @@ export const FileItem = ({ file }: FileItemProps) => {
             filename={fileName}
             isFolder={true}
             isOptimistic={isOptimistic}
+            sharedTo={sharedTo}
             uuid={uuid}
           />
         </div>
@@ -84,8 +86,12 @@ export const FileItem = ({ file }: FileItemProps) => {
           </div>
           <p className="text-lg font-semibold">{file.fileName}</p>
           <FileItemPopOver
+            disableButton={
+              pathStartsWith === "drive" ? [] : ["share", "edit", "delete"]
+            }
             filename={fileName}
             isOptimistic={isOptimistic}
+            sharedTo={sharedTo}
             uuid={uuid}
           />
         </div>

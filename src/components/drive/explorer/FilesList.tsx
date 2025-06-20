@@ -9,6 +9,7 @@ import { useDeleteFile } from "@/hooks/useDeleteFile";
 import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
 import { contextMenuStore } from "@/store/contextMenuStore";
+import { useLocation } from "react-router-dom";
 
 type ListProps = {
   files: FileType[];
@@ -22,6 +23,9 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
   const foldersUuids = useCheckboxStore(
     (store) => store.activeFoldersCheckboxes,
   );
+  const location = useLocation();
+  const pathStartsWith = location.pathname.split("/").at(1);
+
   const restoreDefault = useCheckboxStore((store) => store.restoreDefault);
 
   const setCallback = useDeleteConfirmModalStore((store) => store.setCallback);
@@ -72,10 +76,18 @@ export const FilesList = ({ files, isLoading }: ListProps) => {
         }}
       >
         <h1 className="text-xl font-semibold text-default-800">
-          Looks a bit empty here
+          {pathStartsWith === "drive"
+            ? "Looks a bit empty here"
+            : pathStartsWith === "shared"
+              ? "Nothing has been shared with you yet"
+              : ""}
         </h1>
         <p className="text-md text-default-600">
-          Upload a file to get started.
+          {pathStartsWith === "drive"
+            ? "Upload a file to get started."
+            : pathStartsWith === "shared"
+              ? "Files shared by others will appear here."
+              : ""}
         </p>
       </div>
     );

@@ -6,8 +6,9 @@ import {
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import { useGetFiles } from "@/hooks/useGetFiles";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 type NavbarProps = {
   path: string;
@@ -16,11 +17,18 @@ type NavbarProps = {
 export const Navbar = ({ path }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const pathAfterDrive =
-    location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
+  const queryClient = useQueryClient();
 
-  const { refetch: refreshFn } = useGetFiles(pathAfterDrive);
+  const [isRotateing, setIsRotating] = useState<boolean>(false);
 
+  const pathStartsWith = location.pathname.split("/").at(1);
+
+  const textareaValue =
+    pathStartsWith === "drive"
+      ? `MyDrive/${path}`
+      : pathStartsWith === "shared"
+        ? "SharedWithMe/"
+        : "/";
   const undo = () => {
     navigate(-1);
   };
@@ -34,7 +42,11 @@ export const Navbar = ({ path }: NavbarProps) => {
   };
 
   const refresh = () => {
-    refreshFn();
+    if (isRotateing) return;
+    setIsRotating(true);
+    queryClient.invalidateQueries();
+
+    setTimeout(() => setIsRotating(false), 600);
   };
 
   const iconsClassNames =
@@ -48,12 +60,19 @@ export const Navbar = ({ path }: NavbarProps) => {
       <ArrowLeftIcon className={iconsClassNames} onClick={undo} />
       <ArrowRightIcon className={iconsClassNames} onClick={redo} />
       <HomeIcon className={iconsClassNames} onClick={home} />
-      <ArrowPathIcon className={iconsClassNames} onClick={refresh} />
+      <motion.div
+        animate={isRotateing ? { rotate: 360 } : { rotate: 0 }}
+        className="w-6 h-6 cursor-pointer"
+        transition={{ duration: 0.6, ease: "easeInOut" }}
+        onClick={refresh}
+      >
+        <ArrowPathIcon className={iconsClassNames} />
+      </motion.div>
       <div className=" w-full">
         <Textarea
           isReadOnly
           className="h-9"
-          value={`MyDrive/${path}`}
+          value={textareaValue}
           variant="bordered"
         />
       </div>

@@ -11,4 +11,5 @@ export type FileType = {
   userId: string;
   uuid: string;
   isOptimistic?: boolean;
+  sharedTo?: string[];
 };

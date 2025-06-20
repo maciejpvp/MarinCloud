@@ -31,6 +31,11 @@ export const SettingsPage = () => {
 
   if (!isMounted) return <div />;
 
+  const handleLogout = () => {
+    localStorage.removeItem("refreshToken");
+    location.href = "/login";
+  };
+
   return (
     <DefaultLayout showNavbar={false}>
       <div className="h-full flex flex-col gap-1">
@@ -76,6 +81,7 @@ export const SettingsPage = () => {
             </ButtonGroup>
             <p className="text-sm">Require page reload</p>
           </div>
+          <Button onPress={handleLogout}>Logout</Button>
         </div>
       </div>
     </DefaultLayout>

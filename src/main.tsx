@@ -11,17 +11,13 @@ const queryClient = new QueryClient();
 
 const debug = localStorage.getItem("debug") === "true" ? true : false;
 
-const redirectUrl = import.meta.env.VITE_REDIRECT_URL;
-
-console.log(redirectUrl);
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <div>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Provider>
           <App />
-          {debug && <ReactQueryDevtools />}
+          {debug && <ReactQueryDevtools initialIsOpen={true} />}
         </Provider>
       </QueryClientProvider>
     </BrowserRouter>

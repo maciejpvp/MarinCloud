@@ -16,7 +16,6 @@ export const LeftPanel = () => {
       label: "Shared with me",
       path: "shared",
       icon: UserGroupIcon,
-      available: false,
     },
     {
       label: "Favourites",

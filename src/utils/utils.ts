@@ -5,7 +5,7 @@ export const getExtension = (fileName: string): string => {
 };
 
 export const getDiskUsagePercentage = (usedBytes: number): number => {
-  const limitBytes = 5 * 1024 * 1024 * 1024; // 5 GB
+  const limitBytes = 1 * 1024 * 1024 * 1024; // 5 GB
   const percentage = (usedBytes / limitBytes) * 100;
 
   return Math.min(Math.max(percentage, 0), 100);

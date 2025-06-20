@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import AuthLayout from "@/layouts/auth";
+import { Spinner } from "@heroui/spinner";
 
 export const CallbackPage = () => {
   const [searchParams] = useSearchParams();
@@ -68,7 +69,9 @@ export const CallbackPage = () => {
 
   return (
     <AuthLayout>
-      <p className="text-md">{error ? "Something went wrong" : "Loading..."}</p>
+      <p className="text-md">
+        {error ? "Something went wrong" : <Spinner color="white" />}
+      </p>
     </AuthLayout>
   );
 };

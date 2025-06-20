@@ -17,6 +17,6 @@ export const useGetUsedStorage = () => {
   return useQuery({
     queryKey: ["usedStorage"],
     queryFn: () => fetchData(),
-    staleTime: 10 * 60 * 1000, //10 min
+    staleTime: 60 * 60 * 1000, //60 min
   });
 };

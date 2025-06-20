@@ -3,8 +3,10 @@ import { useLocation } from "react-router-dom";
 
 import { LeftPanel } from "@/components/drive/explorer/LeftPanel";
 import { Navbar } from "@/components/drive/explorer/Navbar";
-import { contextMenuStore } from "@/store/contextMenuStore";
 import { useLeftPanelStore } from "@/store/leftPanelStore";
+import { CreateFileModal } from "@/components/modals/CreateFolderModal";
+import { DeleteConfirmModal } from "@/components/modals/DeleteConfirmModal";
+import { ShareFileModal } from "@/components/modals/ShareFileModal";
 
 export default function DefaultLayout({
   children,
@@ -13,7 +15,6 @@ export default function DefaultLayout({
   children: React.ReactNode;
   showNavbar?: boolean;
 }) {
-  const openContext = contextMenuStore((state) => state.openContext);
   const location = useLocation();
   const pathAfterDrive =
     location.pathname.replace("/drive", "").replace(/^\/+/, "") || "";
@@ -73,6 +74,9 @@ export default function DefaultLayout({
           </div>
         </div>
       </main>
+      <CreateFileModal />
+      <DeleteConfirmModal />
+      <ShareFileModal />
     </div>
   );
 }

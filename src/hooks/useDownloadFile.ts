@@ -9,8 +9,19 @@ export const useDownloadFile = (uuid: string, filename: string) => {
   const downloadFile = async () => {
     setIsLoading(true);
 
+    const pathStartsWith = location.pathname.split("/").at(1);
+
+    const includeBody = pathStartsWith === "shared" ? true : false;
+
+    const body = {
+      isShared: true,
+    };
+
     try {
-      const response = await axiosInstance.get(`/download/${uuid}`);
+      const response = await axiosInstance.post(
+        `/download/${uuid}`,
+        includeBody ? body : {},
+      );
 
       const url = response.data.url;
 
