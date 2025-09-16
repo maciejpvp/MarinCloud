@@ -1,12 +1,30 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense, lazy } from "react";
 import { useLocation } from "react-router-dom";
 
 import { LeftPanel } from "@/components/drive/explorer/LeftPanel";
 import { Navbar } from "@/components/drive/explorer/Navbar";
 import { useLeftPanelStore } from "@/store/leftPanelStore";
-import { CreateFileModal } from "@/components/modals/CreateFolderModal";
-import { DeleteConfirmModal } from "@/components/modals/DeleteConfirmModal";
-import { ShareFileModal } from "@/components/modals/ShareFileModal";
+
+const CreateFileModal = lazy(() =>
+  import("@/components/modals/CreateFolderModal").then((m) => ({
+    default: m.CreateFileModal,
+  })),
+);
+const DeleteConfirmModal = lazy(() =>
+  import("@/components/modals/DeleteConfirmModal").then((m) => ({
+    default: m.DeleteConfirmModal,
+  })),
+);
+const ShareFileModal = lazy(() =>
+  import("@/components/modals/ShareFileModal").then((m) => ({
+    default: m.ShareFileModal,
+  })),
+);
+const TextEditorModal = lazy(() =>
+  import("@/components/TextEditor/TextEditor").then((m) => ({
+    default: m.TextEditorModal,
+  })),
+);
 
 export default function DefaultLayout({
   children,
@@ -47,10 +65,10 @@ export default function DefaultLayout({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", stopResize);
     };
-  }, []);
+  }, [setLeftWidth]);
 
   return (
-    <div className="relative flex flex-col h-screen ">
+    <div className="relative flex flex-col h-screen">
       <main className="container px-3 flex-grow pt-16">
         <div className="flex flex-col gap-4 w-max h-[calc(100dvh-80px)]">
           {showNavbar ? (
@@ -65,18 +83,21 @@ export default function DefaultLayout({
             <div className="h-full" style={{ width: `${leftWidth}px` }}>
               <LeftPanel />
             </div>
-            {/* Resizer Handle */}
             <button
-              className="w-1 cursor-col-resize bg-content1  transition-colors"
+              className="w-1 cursor-col-resize bg-content1 transition-colors"
               onMouseDown={() => (isResizing.current = true)}
             />
             <div className="flex-1 px-1 h-full">{children}</div>
           </div>
         </div>
       </main>
-      <CreateFileModal />
-      <DeleteConfirmModal />
-      <ShareFileModal />
+
+      <Suspense fallback={null}>
+        <CreateFileModal />
+        <DeleteConfirmModal />
+        <ShareFileModal />
+        <TextEditorModal />
+      </Suspense>
     </div>
   );
 }
