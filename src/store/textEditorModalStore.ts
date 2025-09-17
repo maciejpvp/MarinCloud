@@ -3,27 +3,25 @@ import { create } from "zustand";
 interface TextEditorModalState {
   isOpen: boolean;
   filename: string;
-  value: string;
-  open: (filename: string, initialValue?: string) => void;
+  uuid: string;
+  open: (filename: string, uuid: string) => void;
   close: () => void;
-  setValue: (value: string) => void;
 }
 
 export const useTextEditorModalStore = create<TextEditorModalState>((set) => ({
   isOpen: false,
   filename: "",
-  value: "",
-  open: (filename, initialValue = "") =>
+  uuid: "",
+  open: (filename, uuid) =>
     set({
       isOpen: true,
       filename,
-      value: initialValue,
+      uuid,
     }),
   close: () =>
     set({
       isOpen: false,
       filename: "",
-      value: "",
+      uuid: "",
     }),
-  setValue: (value) => set({ value }),
 }));

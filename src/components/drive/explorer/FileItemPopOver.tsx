@@ -63,8 +63,8 @@ export const FileItemPopOver = ({
     openShareModal({ uuid, filename, emails: [...sharedTo] });
   };
 
-  const handleOpenInTextEditor = () => {
-    openTextEditor(filename, "Test Text");
+  const handleOpenInTextEditor = async () => {
+    openTextEditor(filename, uuid);
   };
 
   const withIconSize = (Icon: React.ElementType) => (
@@ -135,7 +135,7 @@ export const FileItemPopOver = ({
                 key={key}
                 description={description}
                 startContent={icon}
-                onClick={onClick}
+                onClick={() => onClick?.()}
               >
                 {label}
               </DropdownItem>
