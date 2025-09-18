@@ -89,6 +89,7 @@ export const FileItem = ({ file }: FileItemProps) => {
             disableButton={
               pathStartsWith === "drive" ? [] : ["share", "edit", "delete"]
             }
+            extension={extension}
             filename={fileName}
             isOptimistic={isOptimistic}
             sharedTo={sharedTo}

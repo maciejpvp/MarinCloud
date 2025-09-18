@@ -10,6 +10,7 @@ import {
   UserPlusIcon,
   TrashIcon,
   PencilIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 
 import { Bars } from "@/components/icons";
@@ -18,10 +19,12 @@ import { useDeleteFile } from "@/hooks/useDeleteFile";
 import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
 import { useShareFileModalStore } from "@/store/shareFileModalStore";
+import { useTextEditorModalStore } from "@/store/textEditorModalStore";
 
 type FileItemPopOverProps = {
   uuid: string;
   filename: string;
+  extension?: string;
   disableButton?: string[];
   isFolder?: boolean;
   isOptimistic?: boolean;
@@ -31,6 +34,7 @@ type FileItemPopOverProps = {
 export const FileItemPopOver = ({
   uuid,
   filename,
+  extension,
   disableButton = [],
   isFolder = false,
   isOptimistic = false,
@@ -43,6 +47,7 @@ export const FileItemPopOver = ({
   const setCallback = useDeleteConfirmModalStore((store) => store.setCallback);
   const openDeleteModal = useDeleteConfirmModalStore((store) => store.open);
   const openShareModal = useShareFileModalStore((store) => store.open);
+  const openTextEditor = useTextEditorModalStore((store) => store.open);
 
   const handleDelete = () => {
     if (isFolder) {
@@ -56,6 +61,10 @@ export const FileItemPopOver = ({
 
   const handleOpenShareModal = () => {
     openShareModal({ uuid, filename, emails: [...sharedTo] });
+  };
+
+  const handleOpenInTextEditor = async () => {
+    openTextEditor(filename, uuid);
   };
 
   const withIconSize = (Icon: React.ElementType) => (
@@ -84,6 +93,16 @@ export const FileItemPopOver = ({
       icon: withIconSize(PencilIcon),
     },
   ];
+
+  if (extension === "txt") {
+    dropdownActions.push({
+      key: "textEditor",
+      label: "Open in Text Editor",
+      description: "Edit text file directly",
+      icon: withIconSize(DocumentTextIcon),
+      onClick: handleOpenInTextEditor,
+    });
+  }
 
   const dangerActions = [
     {
@@ -116,7 +135,7 @@ export const FileItemPopOver = ({
                 key={key}
                 description={description}
                 startContent={icon}
-                onClick={onClick}
+                onClick={() => onClick?.()}
               >
                 {label}
               </DropdownItem>

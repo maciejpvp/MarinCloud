@@ -5,6 +5,7 @@ import axiosInstance from "../lib/axios";
 
 const uploadFile = async (
   file: File,
+  uuid?: string,
   onProgress?: (progress: number) => void,
 ) => {
   const pathAfterDrive =
@@ -14,6 +15,7 @@ const uploadFile = async (
 
   const response = await axiosInstance.post("/upload-file", {
     filename,
+    uuid,
     path: pathAfterDrive,
     filesize: file.size,
   });
@@ -58,24 +60,28 @@ export const useUploadFile = (
   return useMutation({
     mutationFn: ({
       file,
+      uuid,
       onProgress,
     }: {
       file: File;
+      uuid?: string;
       onProgress?: (progress: number) => void;
-    }) => uploadFile(file, onProgress),
+    }) => uploadFile(file, uuid, onProgress),
 
     onMutate: ({
       file,
+      uuid,
       onProgress: _onProgress,
     }: {
       file: File;
+      uuid?: string;
       onProgress?: (progress: number) => void;
     }) => {
       const fileName = file.name;
 
       const tempFile = {
         fileName,
-        uuid: "temp",
+        uuid: uuid ? uuid : "temp",
         isFolder: false,
         isOptimistic: true,
       };
@@ -85,17 +91,21 @@ export const useUploadFile = (
         tempFile,
       ]);
 
-      return { fileSize: file.size };
+      return { fileSize: file.size, uuid };
     },
 
     onSuccess: (data, __, context) => {
       setUploading(false);
       setUploadProgress(0);
 
+      if (!context) return;
+
+      const uuid = context.uuid;
+
       const file = { ...data.item, size: context.fileSize ?? 0 };
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
-        old.filter((item) => item.uuid !== "temp"),
+        old.filter((item) => item.uuid !== (uuid ?? "temp")),
       );
 
       queryClient.setQueryData<any[]>(queryKey, (old = []) => [...old, file]);
@@ -105,9 +115,11 @@ export const useUploadFile = (
       });
     },
 
-    onError: () => {
+    onError: (_data, __, context) => {
+      const uuid = context?.uuid;
+
       queryClient.setQueryData<any[]>(queryKey, (old = []) =>
-        old.filter((item) => item.uuid !== "temp"),
+        old.filter((item) => item.uuid !== (uuid ?? "temp")),
       );
 
       setUploading(false);

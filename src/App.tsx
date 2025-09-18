@@ -1,15 +1,29 @@
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { useAuthStore } from "./store/authStore";
 
-import { LoadingPage } from "@/pages/Loading";
-import { IndexPage } from "@/pages/drive";
-import { LoginPage } from "@/pages/login";
-import { CallbackPage } from "@/pages/callback";
-import { FavouritesPage } from "@/pages/favourites";
-import { SharedPade } from "@/pages/shared";
-import { SettingsPage } from "@/pages/settings";
+const LoadingPage = lazy(() =>
+  import("@/pages/Loading").then((m) => ({ default: m.LoadingPage })),
+);
+const IndexPage = lazy(() =>
+  import("@/pages/drive").then((m) => ({ default: m.IndexPage })),
+);
+const LoginPage = lazy(() =>
+  import("@/pages/login").then((m) => ({ default: m.LoginPage })),
+);
+const CallbackPage = lazy(() =>
+  import("@/pages/callback").then((m) => ({ default: m.CallbackPage })),
+);
+const FavouritesPage = lazy(() =>
+  import("@/pages/favourites").then((m) => ({ default: m.FavouritesPage })),
+);
+const SharedPade = lazy(() =>
+  import("@/pages/shared").then((m) => ({ default: m.SharedPade })),
+);
+const SettingsPage = lazy(() =>
+  import("@/pages/settings").then((m) => ({ default: m.SettingsPage })),
+);
 
 function App() {
   const login = useAuthStore((store) => store.login);
@@ -32,28 +46,30 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route element={<CallbackPage />} path="/callback" />
-      <Route
-        element={hasToken ? <IndexPage /> : <LoadingPage />}
-        path="/drive/*"
-      />
-      <Route
-        element={hasToken ? <FavouritesPage /> : <LoadingPage />}
-        path="/favourites/*"
-      />
-      <Route
-        element={hasToken ? <SharedPade /> : <LoadingPage />}
-        path="/shared/*"
-      />
-      <Route
-        element={hasToken ? <SettingsPage /> : <LoadingPage />}
-        path="/settings"
-      />
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route element={<CallbackPage />} path="/callback" />
+        <Route
+          element={hasToken ? <IndexPage /> : <LoadingPage />}
+          path="/drive/*"
+        />
+        <Route
+          element={hasToken ? <FavouritesPage /> : <LoadingPage />}
+          path="/favourites/*"
+        />
+        <Route
+          element={hasToken ? <SharedPade /> : <LoadingPage />}
+          path="/shared/*"
+        />
+        <Route
+          element={hasToken ? <SettingsPage /> : <LoadingPage />}
+          path="/settings"
+        />
 
-      <Route element={<LoginPage />} path="/login" />
-      <Route element={<Navigate to="/drive" />} path="*" />
-    </Routes>
+        <Route element={<LoginPage />} path="/login" />
+        <Route element={<Navigate to="/drive" />} path="*" />
+      </Routes>
+    </Suspense>
   );
 }
 
