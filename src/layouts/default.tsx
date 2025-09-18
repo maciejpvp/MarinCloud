@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { LeftPanel } from "@/components/drive/explorer/LeftPanel";
 import { Navbar } from "@/components/drive/explorer/Navbar";
 import { useLeftPanelStore } from "@/store/leftPanelStore";
+import { ImageViewer } from "@/components/ImageViewer/ImageViewer";
 
 const CreateFileModal = lazy(() =>
   import("@/components/modals/CreateFolderModal").then((m) => ({
@@ -23,6 +24,11 @@ const ShareFileModal = lazy(() =>
 const TextEditorModal = lazy(() =>
   import("@/components/TextEditor/TextEditor").then((m) => ({
     default: m.TextEditorModal,
+  })),
+);
+const ImageViewerModal = lazy(() =>
+  import("@/components/ImageViewer/ImageViewer").then((m) => ({
+    default: m.ImageViewer,
   })),
 );
 
@@ -97,6 +103,7 @@ export default function DefaultLayout({
         <DeleteConfirmModal />
         <ShareFileModal />
         <TextEditorModal />
+        <ImageViewer />
       </Suspense>
     </div>
   );

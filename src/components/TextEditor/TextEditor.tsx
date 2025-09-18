@@ -7,11 +7,11 @@ import {
   ModalFooter,
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
 
 import { useTextEditorModalStore } from "@/store/textEditorModalStore";
 import { useDownloadFile } from "@/hooks/useDownloadFile";
 import { useUploadFile } from "@/hooks/useUploadFile";
-import { Spinner } from "@heroui/spinner";
 
 export const TextEditorModal = () => {
   const isOpen = useTextEditorModalStore((store) => store.isOpen);

@@ -11,6 +11,7 @@ import {
   TrashIcon,
   PencilIcon,
   DocumentTextIcon,
+  PhotoIcon,
 } from "@heroicons/react/24/outline";
 
 import { Bars } from "@/components/icons";
@@ -20,6 +21,7 @@ import { useDeleteFolder } from "@/hooks/useDeleteFolder";
 import { useDeleteConfirmModalStore } from "@/store/deleteConfirmModalStore";
 import { useShareFileModalStore } from "@/store/shareFileModalStore";
 import { useTextEditorModalStore } from "@/store/textEditorModalStore";
+import { useImageViewerStore } from "@/store/imageViewerStore";
 
 type FileItemPopOverProps = {
   uuid: string;
@@ -30,6 +32,19 @@ type FileItemPopOverProps = {
   isOptimistic?: boolean;
   sharedTo?: string[];
 };
+
+const imageExtensions = ["png", "jpg", "jpeg", "gif", "bmp", "webp"];
+const textExtensions = [
+  "txt",
+  "md",
+  "json",
+  "csv",
+  "log",
+  "xml",
+  "html",
+  "js",
+  "ts",
+];
 
 export const FileItemPopOver = ({
   uuid,
@@ -67,6 +82,10 @@ export const FileItemPopOver = ({
     openTextEditor(filename, uuid);
   };
 
+  const handleOpenImageViewer = () => {
+    useImageViewerStore.getState().open(filename, uuid);
+  };
+
   const withIconSize = (Icon: React.ElementType) => (
     <Icon className="size-10" />
   );
@@ -94,13 +113,22 @@ export const FileItemPopOver = ({
     },
   ];
 
-  if (extension === "txt") {
+  if (textExtensions.includes(extension ?? "")) {
     dropdownActions.push({
       key: "textEditor",
       label: "Open in Text Editor",
       description: "Edit text file directly",
       icon: withIconSize(DocumentTextIcon),
       onClick: handleOpenInTextEditor,
+    });
+  }
+  if (imageExtensions.includes(extension ?? "")) {
+    dropdownActions.push({
+      key: "textEditor",
+      label: "Open in Image Viewer",
+      description: "View image directly",
+      icon: withIconSize(PhotoIcon),
+      onClick: handleOpenImageViewer,
     });
   }
 
