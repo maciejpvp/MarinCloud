@@ -11,6 +11,7 @@ import { Button } from "@heroui/button";
 import { useTextEditorModalStore } from "@/store/textEditorModalStore";
 import { useDownloadFile } from "@/hooks/useDownloadFile";
 import { useUploadFile } from "@/hooks/useUploadFile";
+import { Spinner } from "@heroui/spinner";
 
 export const TextEditorModal = () => {
   const isOpen = useTextEditorModalStore((store) => store.isOpen);
@@ -86,20 +87,22 @@ export const TextEditorModal = () => {
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
+            <ModalHeader className="flex flex-col gap-1 text-content1-foreground">
               Editing {`"${filename}"`}
             </ModalHeader>
 
             <ModalBody>
               {value === undefined ? (
-                <div className="flex items-center justify-center h-[60vh]">
-                  <span className="text-gray-500">Loading...</span>
+                <div className="flex flex-col items-center justify-center h-[60vh]">
+                  <Spinner size="lg">
+                    <span className="text-content3 text-sm">Loading...</span>
+                  </Spinner>
                 </div>
               ) : (
                 <textarea
                   className="w-full h-[60vh] resize-none rounded-lg border border-gray-300 shadow-md 
-                             bg-white text-gray-800 p-4 font-mono text-base leading-relaxed 
-                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                             bg-content2 text-content2-foreground p-4 font-mono text-base leading-relaxed 
+                             focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   disabled={uploading}
                   placeholder="Start typing..."
                   value={value}
